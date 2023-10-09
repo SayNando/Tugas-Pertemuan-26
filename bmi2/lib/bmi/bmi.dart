@@ -14,7 +14,7 @@ class _BmiAppState extends State<BmiApp> {
   TextEditingController tinggiController = TextEditingController();
   TextEditingController beratController = TextEditingController();
 
-  String hasilBMI = ''; // Variabel untuk menyimpan hasil BMI
+  String hasilBMI = '';
 
   @override
   Widget build(BuildContext context) {
@@ -23,123 +23,141 @@ class _BmiAppState extends State<BmiApp> {
         leading: InkWell(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CoverPage(),
-                ));
+              context,
+              MaterialPageRoute(
+                builder: (context) => CoverPage(),
+              ),
+            );
           },
-          child: Icon(Icons.west),
+          child: Icon(Icons.west, color: Colors.white),
         ),
         title: const Text('BMI CALCULATOR'),
+        centerTitle: true,
+        backgroundColor: Colors.purple,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            padding: const EdgeInsets.all(20),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.purple, Colors.deepPurple],
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.accessibility_new,
+                  color: Colors.white,
+                  size: 80,
+                ),
+                SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: tinggiController,
+                        keyboardType: TextInputType.number,
+                        style: TextStyle(fontSize: 18),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.height, color: Colors.purple),
+                          labelText: "Tinggi Badan (CM)",
+                          labelStyle: TextStyle(fontSize: 16),
+                          hintText: 'Contoh: 150',
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        controller: beratController,
+                        keyboardType: TextInputType.number,
+                        style: TextStyle(fontSize: 18),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.fitness_center, color: Colors.purple),
+                          labelText: "Berat Badan (KG)",
+                          labelStyle: TextStyle(fontSize: 16),
+                          hintText: 'Contoh: 60',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () {
+                    double tinggi = double.tryParse(tinggiController.text) ?? 0;
+                    double berat = double.tryParse(beratController.text) ?? 0;
+
+                    if (tinggi > 0 && berat > 0) {
+                      BMICalculator kalkulator = BMICalculator();
+                      double bmi = kalkulator.calculateBMI(berat, tinggi);
+                      String hasil = kalkulator.getBMIResult(bmi);
+
+                      setState(() {
+                        hasilBMI =
+                            'BMI Anda Dengan\nTinggi: $tinggi\nBerat: $berat\nAdalah: $bmi\nKategori: $hasil';
+                      });
+                    } else {
+                      setState(() {
+                        hasilBMI = 'Masukkan Nilai yang Valid';
+                      });
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.purple,
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: const Text(
+                    'Hitung BMI',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    hasilBMI,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.purple),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),
-            child: Column(children: [
-              Text("Masukan Tinggi Badan (CM)",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              TextField(
-                controller: tinggiController,
-                decoration: const InputDecoration(
-                  hintText: 'Contoh: 150',
-                ),
-              )
-            ]),
           ),
-          Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            padding: const EdgeInsets.all(20),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(children: [
-              const Text(
-                "Masukan Berat Badan (KG)",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              TextField(
-                controller: beratController,
-                decoration: const InputDecoration(
-                  hintText: 'Contoh: 150',
-                ),
-              )
-            ]),
-          ),
-          Container(
-            margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            child: ElevatedButton(
-              onPressed: () {
-                double tinggi = double.tryParse(tinggiController.text) ?? 0;
-                double berat = double.tryParse(beratController.text) ?? 0;
-
-                if (tinggi > 0 && berat > 0) {
-                  BMICalculator kalkulator = BMICalculator();
-                  double bmi = kalkulator.calculateBMI(berat, tinggi);
-                  String hasil = kalkulator.getBMIResult(bmi);
-
-                  setState(() {
-                    hasilBMI =
-                        'BMI Anda Dengan\nTinggi: $tinggi\nBerat: $berat\nAdalah: $bmi\nKategori: $hasil';
-                  });
-                } else {
-                  setState(() {
-                    hasilBMI = 'Masukkan Nilai yang Valid';
-                  });
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                shadowColor: Colors.blue,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 90, vertical: 5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(60),
-                ),
-              ),
-              child: const Text(
-                'Hitung',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.all(20),
-            child: Text(
-              hasilBMI,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          )
-        ],
+        ),
       ),
     );
   }
